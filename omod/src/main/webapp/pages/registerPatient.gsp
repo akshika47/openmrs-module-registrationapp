@@ -11,6 +11,7 @@
     ui.includeJavascript("uicommons", "navigator/navigatorTemplates.js", Integer.MAX_VALUE - 21)
     ui.includeJavascript("uicommons", "navigator/exitHandlers.js", Integer.MAX_VALUE - 22);
     ui.includeJavascript("registrationapp", "registerPatient.js");
+    ui.includeJavascript("registrationapp", "webcam.js");
 
     def genderOptions = [ [label: ui.message("emr.gender.M"), value: 'M'],
                           [label: ui.message("emr.gender.F"), value: 'F'] ]
@@ -208,7 +209,42 @@ ${ ui.includeFragment("uicommons", "validationMessages")}
                             ])}
                         </fieldset>
                     <% } %>
+        <fieldset id="patient-pic">
+            <legend>Picture</legend>
+            <script language="JavaScript">
+                Webcam.set({
+                               width: 320,
+                               height: 240,
+                               image_format: 'jpeg',
+                               jpeg_quality: 90
+                           });
+                Webcam.attach( '#my_camera' );
+            </script>
 
+            <p style="margin-bottom: 10px">Webcam Preview </p>
+
+            <div id="camera">
+                <div id="my_camera" style="width:320px; height:240px;"></div>
+                <script language="JavaScript">
+                Webcam.attach('#my_camera');
+                function take_snapshot() {
+                    Webcam.snap(function (data_uri) {
+                        // display results in page
+                        document.getElementById('results').innerHTML =
+                        '<h2>Webcam Snapshot Preview</h2>' +
+                        '<img src="'+data_uri+'"/>';
+                    });
+                }
+            </script>
+            </div>
+            <div id="take-pic">
+                <input type="button" value="Take Picture" onclick="take_snapshot()">
+                <input id="mydata" type="hidden" name="mydata" value=""/>
+            </div>
+
+            <div id="my_result"></div>
+            <div id="results" style="margin-top: 10px">Webcam Image Preview</div>
+        </fieldset>
                     <% questions.each { question ->
                         def fields=question.fields
                     %>
@@ -243,8 +279,7 @@ ${ ui.includeFragment("uicommons", "validationMessages")}
                     <% } %>
             </section>
         <% } %>
-
-        <% if (allowManualIdentifier) { %>
+            <% if (allowManualIdentifier) { %>
             <section id="patient-identification-section" class="non-collapsible">
                 <span class="title">${ui.message("registrationapp.patient.identifiers.label")}</span>
 

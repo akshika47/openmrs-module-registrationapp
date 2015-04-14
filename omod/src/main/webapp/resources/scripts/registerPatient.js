@@ -5,6 +5,7 @@ jq = jQuery;
 var NavigatorController;
 
 jq(function() {
+
     NavigatorController = new KeyboardController();
 
     /* Similar patient functionality */
